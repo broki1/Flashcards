@@ -7,15 +7,10 @@ internal class Program
 {
     static void Main(string[] args)
     {
-        var connectionString = ConfigurationManager.AppSettings.Get("ConnectionString");
+        // stores connection string to master DB
+        var connectionString = ConfigurationManager.AppSettings.Get("MasterConnectionString");
 
-        using (var connection = new SSClient.SqlConnection(connectionString))
-        {
-            connection.Open();
-
-            Console.WriteLine("Connection opened successfully...\n\nPress any key to finish...");
-
-            Console.ReadKey();
-        }
+        // calls method that creates Flashcard DB if it doesn't already exist on the server
+        DatabaseManager.CreateDatabase(connectionString);
     }
 }
