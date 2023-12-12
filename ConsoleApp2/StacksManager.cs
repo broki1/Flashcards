@@ -7,19 +7,46 @@ namespace Flashcards;
 
 internal class StacksManager
 {
-    // holds all Stacks to display
-    private static List<Stack> stacks = new List<Stack>();
-
     // connection string for Flashcards DB
     private static string connectionString = ConfigurationManager.AppSettings.Get("FlashcardsConnectionString");
+    private static List<string> stackNames = new List<string>();
     internal static void ManageStacks()
     {
+        Console.Clear();
         // calls method that displays Stacks to user
         StacksManager.PrintStacks();
+
+        Console.WriteLine("------------------------------------");
+        Console.WriteLine("Input current stack name\nInput 1 to create new stack\nOr input 0 to exit input");
+        Console.WriteLine("------------------------------------\n\n");
+
+        var userInput = Console.ReadLine().Trim().ToLower();
+
+        var validStackName = StacksManager.ValidateInput(userInput);
+
+        Console.WriteLine(validStackName);
+
+    }
+
+    private static bool ValidateInput(string input)
+    {
+        if (StacksManager.stackNames.Contains(input.Trim().ToLower()))
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
     }
 
     internal static void PrintStacks()
     {
+        Console.Clear();
+
+        // holds all Stacks to display
+        List<Stack> stacks = new List<Stack>();
+
         using (var connection = new QC.SqlConnection(connectionString))
         {
             using (var command = new QC.SqlCommand())
@@ -41,6 +68,8 @@ internal class StacksManager
                         {
                             Name = reader.GetString(0)
                         });
+
+                        stackNames.Add(reader.GetString(0).Trim().ToLower());
                     }
                 }
                 else
