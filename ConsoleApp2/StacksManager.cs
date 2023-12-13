@@ -1,7 +1,7 @@
-﻿using QC = Microsoft.Data.SqlClient;
-using System.Configuration;
+﻿using ConsoleTableExt;
 using Flashcards.Models;
-using ConsoleTableExt;
+using System.Configuration;
+using QC = Microsoft.Data.SqlClient;
 
 namespace Flashcards;
 
@@ -9,7 +9,10 @@ internal class StacksManager
 {
     // connection string for Flashcards DB
     private static string connectionString = ConfigurationManager.AppSettings.Get("FlashcardsConnectionString");
+
+    // creates string list to hold Stack names that are printed to the console, to validate if user input correlates to existing stack
     private static List<string> stackNames = new List<string>();
+
     internal static void ManageStacks()
     {
         Console.Clear();
@@ -22,22 +25,31 @@ internal class StacksManager
 
         var userInput = Console.ReadLine().Trim().ToLower();
 
-        var validStackName = StacksManager.ValidateInput(userInput);
-
-        Console.WriteLine(validStackName);
+        switch (userInput)
+        {
+            case "0":
+                break;
+            case "1":
+                StacksManager.CreateNewStack();
+                break;
+        }
 
     }
 
-    private static bool ValidateInput(string input)
+    private static void CreateNewStack()
     {
-        if (StacksManager.stackNames.Contains(input.Trim().ToLower()))
+        Console.WriteLine("Input the stack name:");
+        var stackName = Console.ReadLine().Trim().ToLower();
+
+        while (Helpers.ValidateInput(stackName, stackNames))
         {
-            return true;
+            Console.WriteLine("\n\nInvalid input. Stack name already exists. Please try again.\n\n");
+            stackName = Console.ReadLine();
         }
-        else
-        {
-            return false;
-        }
+
+        stackName = Helpers.FormatStackName(stackName);
+
+        DatabaseManager.CreateStack(stackName, connectionString);
     }
 
     internal static void PrintStacks()
@@ -69,7 +81,10 @@ internal class StacksManager
                             Name = reader.GetString(0)
                         });
 
-                        stackNames.Add(reader.GetString(0).Trim().ToLower());
+                        if (!StacksManager.stackNames.Contains(reader.GetString(0).Trim().ToLower()))
+                        {
+                            StacksManager.stackNames.Add(reader.GetString(0).Trim().ToLower());
+                        }
                     }
                 }
                 else

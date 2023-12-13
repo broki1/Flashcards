@@ -51,6 +51,24 @@ internal class DatabaseManager
         }
     }
 
+    internal static void CreateStack(string stackName, string flashcardsConnectionString)
+    {
+        using (var connection = new QC.SqlConnection(flashcardsConnectionString))
+        {
+            using (var command = new QC. SqlCommand())
+            {
+                connection.Open();
+                command.Connection = connection;
+                command.CommandType= DT.CommandType.Text;
+                command.CommandText = @$"INSERT INTO Stacks (name) VALUES ('{stackName}')";
+
+                command.ExecuteNonQuery();
+            }
+        }
+
+        Console.WriteLine($"\n\nStack '{stackName}' created.\n\n");
+    }
+
     internal static void CreateStacksTable(string flashcardsConnectionString)
     {
         using (var connection = new QC.SqlConnection(flashcardsConnectionString))

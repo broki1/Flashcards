@@ -21,4 +21,22 @@ internal class Helpers
         DatabaseManager.CreateFlashcardsTable(flashcardsConnectionString);
     }
 
+    // formats parameter string so that first letter is capitalized and the rest of the characters are lowercase
+    internal static string FormatStackName(string stackName)
+    {
+        return char.ToUpper(stackName[0]) + stackName.Substring(1).ToLower();
+    }
+
+    // checks StackNames list if stack name inputted by the user already exists
+    internal static bool ValidateInput(string userInput, List<string> stackNames)
+    {
+        if (stackNames.Contains(userInput.Trim().ToLower()))
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
 }
