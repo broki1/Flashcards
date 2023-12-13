@@ -13,7 +13,7 @@ internal class StacksManager
     // creates string list to hold Stack names that are printed to the console, to validate if user input correlates to existing stack
     private static List<string> stackNames = new List<string>();
 
-    internal static void ManageStacks()
+    internal static void ManageStacksMenu()
     {
         Console.Clear();
         // calls method that displays Stacks to user

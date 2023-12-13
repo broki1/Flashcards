@@ -33,7 +33,7 @@ internal class MainMenu
                     endApp = true;
                     break;
                 case "manage stacks":
-                    StacksManager.ManageStacks();
+                    StacksManager.ManageStacksMenu();
                     break;
                 default:
                     Console.WriteLine("\n\nInvalid input. Please try again.\n\n");
