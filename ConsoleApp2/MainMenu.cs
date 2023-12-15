@@ -15,6 +15,8 @@ internal class MainMenu
 
         while (!endApp)
         {
+            Console.Clear();
+
             Console.WriteLine("------------------------");
             Console.WriteLine("exit");
             Console.WriteLine("Manage Stacks");

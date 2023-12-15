@@ -28,15 +28,40 @@ internal class Helpers
     }
 
     // checks StackNames list if stack name inputted by the user already exists
-    internal static bool ValidateInput(string userInput, List<string> stackNames)
+    internal static bool StackNameAlreadyExists(string userInput)
     {
-        if (stackNames.Contains(userInput.Trim().ToLower()))
+        bool validInput = false;
+
+        var connectionString = ConfigurationManager.AppSettings.Get("FlashcardsConnectionString");
+        
+
+        using (var connection = new Microsoft.Data.SqlClient.SqlConnection(connectionString))
         {
-            return true;
+            using (var command = new  Microsoft.Data.SqlClient.SqlCommand())
+            {
+                connection.Open();
+                command.Connection = connection;
+                command.CommandType = System.Data.CommandType.Text;
+                command.CommandText = "SELECT name FROM Stacks";
+
+                var reader  = command.ExecuteReader();
+
+                if (reader.HasRows)
+                {
+                    while (reader.Read())
+                    {
+                        var stackName = reader.GetString(0).Trim().ToLower();
+
+                        if (userInput.Equals(stackName))
+                        {
+                            validInput = true;
+                        }
+                    }
+                }
+
+            }
         }
-        else
-        {
-            return false;
-        }
+
+        return validInput;
     }
 }

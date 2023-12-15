@@ -15,23 +15,40 @@ internal class StacksManager
 
     internal static void ManageStacksMenu()
     {
-        Console.Clear();
-        // calls method that displays Stacks to user
-        StacksManager.PrintStacks();
+        bool exitManageStacksMenu = false;
 
-        Console.WriteLine("------------------------------------");
-        Console.WriteLine("Input current stack name\nInput 1 to create new stack\nOr input 0 to exit input");
-        Console.WriteLine("------------------------------------\n\n");
-
-        var userInput = Console.ReadLine().Trim().ToLower();
-
-        switch (userInput)
+        while (!exitManageStacksMenu)
         {
-            case "0":
-                break;
-            case "1":
-                StacksManager.CreateNewStack();
-                break;
+            // calls method that displays Stacks to user
+            StacksManager.PrintStacks();
+
+            Console.WriteLine("------------------------------------");
+            Console.WriteLine("Input current stack name\nInput 1 to create new stack\nOr input 0 to exit input");
+            Console.WriteLine("------------------------------------\n\n");
+
+            var userInput = Console.ReadLine().Trim().ToLower();
+
+            switch (userInput)
+            {
+                case "0":
+                    exitManageStacksMenu = true;
+                    break;
+                case "1":
+                    StacksManager.CreateNewStack();
+                    break;
+                default:
+
+                    if (!Helpers.StackNameAlreadyExists(userInput))
+                    {
+                        Console.WriteLine("\n\nStack doesn't exist. Input current stack name, input 1 to create new stack, or input 0 to exit input.\n\n");
+                    }
+                    else
+                    {
+                        Console.WriteLine("Success!");
+                    }
+
+                    break;
+            }
         }
 
     }
@@ -41,7 +58,7 @@ internal class StacksManager
         Console.WriteLine("Input the stack name:");
         var stackName = Console.ReadLine().Trim().ToLower();
 
-        while (Helpers.ValidateInput(stackName, stackNames))
+        while (Helpers.StackNameAlreadyExists(stackName))
         {
             Console.WriteLine("\n\nInvalid input. Stack name already exists. Please try again.\n\n");
             stackName = Console.ReadLine();
@@ -54,8 +71,6 @@ internal class StacksManager
 
     internal static void PrintStacks()
     {
-        Console.Clear();
-
         // holds all Stacks to display
         List<Stack> stacks = new List<Stack>();
 
