@@ -2,6 +2,7 @@
 using System.Configuration;
 using QC = Microsoft.Data.SqlClient;
 using DT = System.Data;
+using Flashcards.Models;
 
 namespace Flashcards;
 
@@ -42,8 +43,8 @@ internal class DatabaseManager
                                         CREATE TABLE Flashcards(
                                         id int PRIMARY KEY IDENTITY(1,1),
                                         stack int NOT NULL FOREIGN KEY REFERENCES Stacks(id),
-                                        question varchar(255) NOT NULL UNIQUE,
-                                        answer varchar(255) NOT NULL
+                                        front varchar(255) NOT NULL UNIQUE,
+                                        back varchar(255) NOT NULL
                                         )";
 
                 command.ExecuteNonQuery();
@@ -88,5 +89,25 @@ internal class DatabaseManager
                 command.ExecuteNonQuery();
             }
         }
+    }
+
+    // queries Stacks table for ID of stack whose name matches the argument passed in
+    internal static int GetStackId(string stackName)
+    {
+        int stackId;
+        using (var connection = new QC.SqlConnection(ConfigurationManager.AppSettings.Get("FlashcardsConnectionString")))
+        {
+            using (var command = new QC.SqlCommand())
+            {
+                connection.Open();
+                command.Connection = connection;
+                command.CommandType = DT.CommandType.Text;
+                command.CommandText = $"SELECT id FROM Stacks WHERE name = '{stackName}'";
+
+                stackId = Convert.ToInt32(command.ExecuteScalar());
+            }
+        }
+
+        return stackId;
     }
 }
