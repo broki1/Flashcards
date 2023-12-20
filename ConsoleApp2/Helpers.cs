@@ -1,4 +1,6 @@
-﻿using System.Configuration;
+﻿using Microsoft.IdentityModel.Tokens;
+using System.Configuration;
+using System.Diagnostics;
 
 namespace Flashcards;
 
@@ -25,6 +27,31 @@ internal class Helpers
     internal static string FormatStackName(string stackName)
     {
         return char.ToUpper(stackName[0]) + stackName.Substring(1).ToLower();
+    }
+
+    internal static int GetNumFlashcards(string stackName)
+    {
+        Console.WriteLine($"\nHow many flashcards from the {stackName} stack do you want to display?\nInput a number 0 or higher, or press enter to see all flashcards.");
+
+        var userInput = Console.ReadLine().Trim();
+
+        if (string.IsNullOrEmpty(userInput))
+        {
+            return -1;
+        }
+
+        while (!int.TryParse(userInput, out _) || int.Parse(userInput) < 0)
+        {
+            Console.WriteLine("\n\nInvalid input. Please input a number 0 or higher, or press enter to see all flashcards.");
+            userInput = Console.ReadLine().Trim();
+
+            if (string.IsNullOrEmpty(userInput))
+            {
+                return -1;
+            }
+        }
+
+        return int.Parse(userInput);
     }
 
     // checks StackNames list if stack name inputted by the user already exists

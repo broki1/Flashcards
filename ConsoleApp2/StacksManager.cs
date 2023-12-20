@@ -129,15 +129,15 @@ internal class StacksManager
                 break;
             case "v":
                 // get Stack ID, then get all flashcards with that stack ID assigned to them, display in order by stack ID
+                var numFlashcards = Helpers.GetNumFlashcards(stackName);
                 var stackId = DatabaseManager.GetStackId(stackName);
-                StacksManager.PrintAllFlashcardsInStack(stackId);
-                Console.ReadLine();
+                StacksManager.PrintFlashcardsInStack(stackId, numFlashcards);
                 break;
 
         }
     }
 
-    private static void PrintAllFlashcardsInStack(int stackId)
+    private static void PrintFlashcardsInStack(int stackId, int numFlashcards = -1)
     {
         Console.Clear();
         // holds all Stacks to display
@@ -160,11 +160,18 @@ internal class StacksManager
                     // while reader obj has rows to read, add that Stack to the Stacks list, but only the name
                     while (reader.Read())
                     {
+                        if (numFlashcards == 0)
+                        {
+                            break;
+                        }
+
                         flashcards.Add(new FlashcardDTO
                         {
                             Front = reader.GetString(2),
                             Back = reader.GetString(3)
                         });
+
+                        numFlashcards--;
                     }
                 }
                 else
@@ -182,8 +189,10 @@ internal class StacksManager
 
                 // uses ConsoleTableExt NuGet package library to display List of Stacks as a table
                 ConsoleTableBuilder.From(flashcards).ExportAndWriteLine();
-                Console.WriteLine("\n\n");
+                Console.WriteLine("\n\nPress any key to continue.");
 
+                Console.ReadKey();
+                Console.WriteLine("\n\n");
             }
         }
     }
