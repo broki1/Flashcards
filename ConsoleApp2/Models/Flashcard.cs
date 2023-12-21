@@ -4,8 +4,8 @@ internal class Flashcard
 {
 
     int Id { get; set; }
-    int Stack {  get; set; }
-    string Front { get; set; }
-    string Back { get; set; }
+    public int Stack {  get; set; }
+    public string Front { get; set; }
+    public string Back { get; set; }
 
 }

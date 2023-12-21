@@ -110,4 +110,28 @@ internal class DatabaseManager
 
         return stackId;
     }
+
+    // posts flashcard object to Flashcards table
+    internal static void PostFlashcard(Flashcard flashcard)
+    {
+        var flashcardConnectionString = ConfigurationManager.AppSettings.Get("FlashcardsConnectionString");
+        using (var connection = new QC.SqlConnection(flashcardConnectionString))
+        {
+            using (var command = new QC.SqlCommand())
+            {
+
+                connection.Open();
+                command.Connection = connection;
+                command.CommandType = DT.CommandType.Text;
+                command.CommandText = $"INSERT INTO Flashcards (stack, front, back) VALUES ({flashcard.Stack}, '{flashcard.Front}', '{flashcard.Back}')";
+
+                var success = command.ExecuteNonQuery() == 1;
+
+                if (success)
+                {
+                    Console.WriteLine("\n\nFlashcard successfully added.");
+                }
+            }
+        }
+    }
 }

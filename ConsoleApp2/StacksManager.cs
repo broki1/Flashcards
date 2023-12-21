@@ -116,9 +116,13 @@ internal class StacksManager
         Console.WriteLine("\n0 to return to main menu");
         Console.WriteLine("X to change current stack");
         Console.WriteLine("V to view all flashcards in stack");
+        Console.WriteLine("A to view X number of flashcards in stack");
+        Console.WriteLine("C to Create a Flashcard in current stack");
         Console.WriteLine();
 
         var userInput = Console.ReadLine().ToLower().Trim();
+
+        var stackId = DatabaseManager.GetStackId(stackName);
 
         switch (userInput)
         {
@@ -129,10 +133,17 @@ internal class StacksManager
                 break;
             case "v":
                 // get Stack ID, then get all flashcards with that stack ID assigned to them, display in order by stack ID
+                StacksManager.PrintFlashcardsInStack(stackId);
+                break;
+            case "a":
                 var numFlashcards = Helpers.GetNumFlashcards(stackName);
-                var stackId = DatabaseManager.GetStackId(stackName);
                 StacksManager.PrintFlashcardsInStack(stackId, numFlashcards);
                 break;
+            case "c":
+                Flashcard flashcard = Helpers.CreateFlashcard(stackId, stackName);
+                DatabaseManager.PostFlashcard(flashcard);
+                break;
+
 
         }
     }

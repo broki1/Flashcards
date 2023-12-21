@@ -1,4 +1,5 @@
-﻿using Microsoft.IdentityModel.Tokens;
+﻿using Flashcards.Models;
+using Microsoft.IdentityModel.Tokens;
 using System.Configuration;
 using System.Diagnostics;
 
@@ -21,6 +22,27 @@ internal class Helpers
         // calls method that creates Stacks and Flashcards tables if they do not already exist in the DB
         DatabaseManager.CreateStacksTable(flashcardsConnectionString);
         DatabaseManager.CreateFlashcardsTable(flashcardsConnectionString);
+    }
+
+    internal static Flashcard CreateFlashcard(int stackId, string stackName)
+    {
+        Console.Clear();
+        Console.WriteLine($"Enter the front (question) of the {stackName} flashcard:\n");
+
+        var front = Console.ReadLine().Trim();
+
+        Console.WriteLine($"\n\nEnter the back (answer) of the {stackName} flashcard:\n");
+
+        var back = Console.ReadLine().Trim();
+
+        return new Flashcard
+        {
+            Stack = stackId,
+            Front = front,
+            Back = back
+        };
+
+        Console.Clear();
     }
 
     // formats parameter string so that first letter is capitalized and the rest of the characters are lowercase
