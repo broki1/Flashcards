@@ -134,4 +134,27 @@ internal class DatabaseManager
             }
         }
     }
+
+    internal static void UpdateFlashcard(int stackId, string oldFront, string front = "", string back = "")
+    {
+        var flashcardConnectionString = ConfigurationManager.AppSettings.Get("FlashcardsConnectionString");
+
+        using (var connection = new QC.SqlConnection(flashcardConnectionString))
+        {
+            using (var command = new QC.SqlCommand())
+            {
+                connection.Open();
+                command.Connection = connection;
+                command.CommandType= DT.CommandType.Text;
+                command.CommandText = $"UPDATE Flashcards SET front = '{front}', back = '{back}' WHERE stack = {stackId} AND front = '{oldFront}'";
+
+                var success = command.ExecuteNonQuery();
+
+                if (success == 1)
+                {
+                    Console.WriteLine("Flashcard successfully updated.");
+                }
+            }
+        }
+    }
 }

@@ -113,4 +113,18 @@ internal class Helpers
 
         return validInput;
     }
+
+    internal static bool ValidFlashcardID(string userInput, List<FlashcardDTO> flashcards)
+    {
+        try
+        {
+            flashcards[int.Parse(userInput) - 1].Front.Trim();
+        }
+        catch (Exception ex)
+        {
+            return false;
+        }
+
+        return true;
+    }
 }
