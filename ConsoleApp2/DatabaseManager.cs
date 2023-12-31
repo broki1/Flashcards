@@ -91,6 +91,29 @@ internal class DatabaseManager
         }
     }
 
+    internal static void DeleteFlashcard(int stackId, string front)
+    {
+        var connectionString = ConfigurationManager.AppSettings.Get("FlashcardsConnectionString");
+
+        using (var connection = new QC.SqlConnection(connectionString))
+        {
+            using (var command = new QC.SqlCommand())
+            {
+                connection.Open();
+                command.Connection = connection;
+                command.CommandType = DT.CommandType.Text;
+                command.CommandText = $"DELETE FROM Flashcards WHERE stack = {stackId} AND front = '{front}'";
+
+                var success = command.ExecuteNonQuery();
+
+                if (success == 1)
+                {
+                    Console.WriteLine("\n\nFlashcard successfully deleted.");
+                }
+            }
+        }
+    }
+
     // queries Stacks table for ID of stack whose name matches the argument passed in
     internal static int GetStackId(string stackName)
     {
@@ -152,7 +175,7 @@ internal class DatabaseManager
 
                 if (success == 1)
                 {
-                    Console.WriteLine("Flashcard successfully updated.");
+                    Console.WriteLine("\nFlashcard successfully updated.");
                 }
             }
         }

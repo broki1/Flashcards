@@ -28,6 +28,7 @@ namespace Flashcards
                 Console.WriteLine("A to view X number of flashcards in stack");
                 Console.WriteLine("C to Create a Flashcard in current stack");
                 Console.WriteLine("E to Edit a Flashcard");
+                Console.WriteLine("D to Delete a Flashcard");
                 Console.WriteLine();
 
                 var userInput = Console.ReadLine().ToLower().Trim();
@@ -66,10 +67,37 @@ namespace Flashcards
                         Console.WriteLine("Press any key to continue.\n\n");
                         Console.ReadKey();
                         break;
+                    case "d":
+                        StackManager.DeleteFlashcard(stackId);
+                        Console.WriteLine("Press any key to continue.\n\n");
+                        Console.ReadKey();
+                        break;
 
 
                 }
             }
+        }
+
+        private static void DeleteFlashcard(int stackId)
+        {
+            Console.Clear();
+            var flashcards = StackManager.PrintFlashcardsInStack(stackId);
+            Console.WriteLine("\n\nEnter ID of flashcard you want to delete.\n\n");
+
+            var userIdInput = Console.ReadLine().Trim();
+
+            while (!Helpers.ValidFlashcardID(userIdInput, flashcards))
+            {
+                Console.WriteLine("\n\nInvalid input. Please enter the ID of the flashcard you want to delete.\n\n");
+                userIdInput = Console.ReadLine().Trim();
+            }
+
+            // formats flashcard Id into an int and also adjusts for offset
+            var flashcardId = int.Parse(userIdInput) - 1;
+
+            var front = flashcards[flashcardId].Front;
+
+            DatabaseManager.DeleteFlashcard(stackId, front);
         }
 
         private static List<FlashcardDTO> PrintFlashcardsInStack(int stackId, int numFlashcards = -1)
