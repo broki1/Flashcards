@@ -1,7 +1,5 @@
 ﻿using Flashcards.Models;
-using Microsoft.IdentityModel.Tokens;
 using System.Configuration;
-using System.Diagnostics;
 
 namespace Flashcards;
 
@@ -82,18 +80,18 @@ internal class Helpers
         bool validInput = false;
 
         var connectionString = ConfigurationManager.AppSettings.Get("FlashcardsConnectionString");
-        
+
 
         using (var connection = new Microsoft.Data.SqlClient.SqlConnection(connectionString))
         {
-            using (var command = new  Microsoft.Data.SqlClient.SqlCommand())
+            using (var command = new Microsoft.Data.SqlClient.SqlCommand())
             {
                 connection.Open();
                 command.Connection = connection;
                 command.CommandType = System.Data.CommandType.Text;
                 command.CommandText = "SELECT name FROM Stacks";
 
-                var reader  = command.ExecuteReader();
+                var reader = command.ExecuteReader();
 
                 if (reader.HasRows)
                 {

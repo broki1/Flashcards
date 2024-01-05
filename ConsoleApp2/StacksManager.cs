@@ -42,7 +42,7 @@ internal class StacksManager
                     }
                     else
                     {
-                        StackManager.IndividualStackMenu(Helpers.FormatStackName(userInput));
+                        StacksManager.ManageStack(Helpers.FormatStackName(userInput));
                     }
 
                     break;
@@ -106,5 +106,38 @@ internal class StacksManager
 
             }
         }
+    }
+
+    private static void ManageStack(string stackName)
+    {
+        Console.WriteLine($"Press 'D' to delete the {stackName} stack, 0 to exit to stack menu.");
+        var userInput = Console.ReadLine().Trim().ToLower();
+
+        while (userInput != "d" &&  userInput != "0")
+        {
+            Console.WriteLine($"\nInvalid input. Press 'D' to delete the {stackName} stack, 0 to exit to stack menu.");
+            userInput = Console.ReadLine().Trim().ToLower();
+        }
+
+        switch (userInput)
+        {
+            case "d":
+                Console.Clear();
+                Console.WriteLine("Are you sure you wish to delete the stack? Press 'y' to confirm, press 'n' to cancel. (All flashcards associated with the stack will be deleted as well.)");
+
+                var userConfirmation = Console.ReadLine().Trim().ToLower() == "y" ? true : false;
+
+                if (userConfirmation)
+                {
+                    var stackId = DatabaseManager.GetStackId(stackName);
+
+                    DatabaseManager.DeleteStack(stackId);
+                }
+                break;
+            case "0":
+                break;
+        }
+
+        Console.ReadKey();
     }
 }

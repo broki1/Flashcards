@@ -1,8 +1,7 @@
-﻿using System;
+﻿using Flashcards.Models;
 using System.Configuration;
-using QC = Microsoft.Data.SqlClient;
 using DT = System.Data;
-using Flashcards.Models;
+using QC = Microsoft.Data.SqlClient;
 
 namespace Flashcards;
 
@@ -15,7 +14,7 @@ internal class DatabaseManager
         using (var connection = new QC.SqlConnection(masterConnectionString))
         {
             connection.Open();
-            
+
             // creates new MDSC SQL command object
             using (var command = new QC.SqlCommand())
             {
@@ -56,11 +55,11 @@ internal class DatabaseManager
     {
         using (var connection = new QC.SqlConnection(flashcardsConnectionString))
         {
-            using (var command = new QC. SqlCommand())
+            using (var command = new QC.SqlCommand())
             {
                 connection.Open();
                 command.Connection = connection;
-                command.CommandType= DT.CommandType.Text;
+                command.CommandType = DT.CommandType.Text;
                 command.CommandText = @$"INSERT INTO Stacks (name) VALUES ('{stackName}')";
 
                 command.ExecuteNonQuery();
@@ -75,11 +74,11 @@ internal class DatabaseManager
         using (var connection = new QC.SqlConnection(flashcardsConnectionString))
         {
             connection.Open();
-            
+
             using (var command = new QC.SqlCommand())
             {
                 command.Connection = connection;
-                command.CommandType= DT.CommandType.Text;
+                command.CommandType = DT.CommandType.Text;
                 command.CommandText = @"IF NOT EXISTS (SELECT 1 FROM sys.objects WHERE name = 'Stacks')
                                         CREATE TABLE Stacks(
                                         id int PRIMARY KEY IDENTITY(1,1),
@@ -109,6 +108,43 @@ internal class DatabaseManager
                 if (success == 1)
                 {
                     Console.WriteLine("\n\nFlashcard successfully deleted.");
+                }
+            }
+        }
+    }
+
+    internal static void DeleteStack(int stackId)
+    {
+        var connectionString = ConfigurationManager.AppSettings.Get("FlashcardsConnectionString");
+
+        using (var connection = new QC.SqlConnection(connectionString))
+        {
+            using ( var command = new QC.SqlCommand())
+            {
+                using (var secondCommand =  new QC.SqlCommand())
+                {
+                    connection.Open();
+                    command.Connection = connection;
+                    command.CommandType = DT.CommandType.Text;
+                    command.CommandText = $"DELETE FROM Stacks WHERE id = {stackId}";
+
+                    secondCommand.Connection = connection;
+                    secondCommand.CommandType = DT.CommandType.Text;
+                    secondCommand.CommandText = $"DELETE FROM Flashcards WHERE stack = {stackId}";
+
+                    
+                    var result2 = secondCommand.ExecuteNonQuery();
+                    var result1 = command.ExecuteNonQuery();
+
+
+                    if (result1 != -1 && result2 != -1)
+                    {
+                        Console.WriteLine("\n\nStack deleted successfully.");
+                    }
+                    else
+                    {
+                        Console.WriteLine("\n\nStack was not able to be deleted.");
+                    }
                 }
             }
         }
@@ -168,7 +204,7 @@ internal class DatabaseManager
             {
                 connection.Open();
                 command.Connection = connection;
-                command.CommandType= DT.CommandType.Text;
+                command.CommandType = DT.CommandType.Text;
                 command.CommandText = $"UPDATE Flashcards SET front = '{front}', back = '{back}' WHERE stack = {stackId} AND front = '{oldFront}'";
 
                 var success = command.ExecuteNonQuery();
