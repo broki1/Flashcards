@@ -38,7 +38,6 @@ namespace Flashcards
                 switch (userInput)
                 {
                     case "0":
-                        MainMenu.StartApplication();
                         exitStackMenu = true;
                         break;
                     case "x":
@@ -191,5 +190,34 @@ namespace Flashcards
             DatabaseManager.UpdateFlashcard(stackId, currentFront, newFront, newBack);
         }
 
+        internal static string RetrieveStackName()
+        {
+            Console.Clear();
+            StacksManager.PrintStacks();
+            Console.WriteLine("\n\nChoose a stack of flashcards to interact with:\n\n");
+            Console.WriteLine("------------------------------------");
+            Console.WriteLine("Input current stack name\nOr input 0 to exit input");
+            Console.WriteLine("------------------------------------\n\n");
+
+            var userInput = Console.ReadLine().Trim().ToLower();
+
+            switch (userInput)
+            {
+                case "0":
+                    break;
+                default:
+                    while (!Helpers.StackNameAlreadyExists(userInput))
+                    {
+                        Console.WriteLine("Invalid input. Stack name doesn't exist.\n");
+                        Console.WriteLine("------------------------------------");
+                        Console.WriteLine("Input current stack name\nOr input 0 to exit input");
+                        Console.WriteLine("------------------------------------\n\n");
+                        userInput = Console.ReadLine().Trim().ToLower();
+                    }
+                    break;
+            }
+
+            return userInput;
+        }
     }
 }

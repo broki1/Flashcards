@@ -67,7 +67,7 @@ internal class StacksManager
         DatabaseManager.CreateStack(stackName, connectionString);
     }
 
-    private static void PrintStacks()
+    internal static void PrintStacks()
     {
         // holds all Stacks to display
         List<Stack> stacks = new List<Stack>();
@@ -123,7 +123,7 @@ internal class StacksManager
         {
             case "d":
                 Console.Clear();
-                Console.WriteLine("Are you sure you wish to delete the stack? Press 'y' to confirm, press 'n' to cancel. (All flashcards associated with the stack will be deleted as well.)");
+                Console.WriteLine("\nAre you sure you wish to delete the stack? Press 'y' to confirm, press 'n' to cancel. (All flashcards associated with the stack will be deleted as well.)");
 
                 var userConfirmation = Console.ReadLine().Trim().ToLower() == "y" ? true : false;
 
@@ -137,7 +137,5 @@ internal class StacksManager
             case "0":
                 break;
         }
-
-        Console.ReadKey();
     }
 }

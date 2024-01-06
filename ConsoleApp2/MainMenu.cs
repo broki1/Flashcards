@@ -37,6 +37,14 @@ internal class MainMenu
                 case "manage stacks":
                     StacksManager.ManageStacksMenu();
                     break;
+                case "manage flashcards":
+                    var stackName = StackManager.RetrieveStackName();
+
+                    if (!(stackName == "0"))
+                    {
+                        StackManager.IndividualStackMenu(stackName);
+                    }
+                    break;
                 default:
                     Console.WriteLine("\n\nInvalid input. Please try again.\n\n");
                     break;
