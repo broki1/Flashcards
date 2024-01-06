@@ -28,6 +28,29 @@ internal class DatabaseManager
         }
     }
 
+    internal static void CreateStudySessionsTable(string flashcardsConnectionString)
+    {
+        using (var connection = new QC.SqlConnection(flashcardsConnectionString))
+        {
+            using (var command = new QC.SqlCommand())
+            {
+                connection.Open();
+
+                command.Connection = connection;
+                command.CommandType= DT.CommandType.Text;
+                command.CommandText = @"IF NOT EXISTS (SELECT 1 FROM sys.objects WHERE name = 'StudySessions')
+                                        CREATE TABLE StudySessions (
+                                        id int PRIMARY KEY IDENTITY(1, 1),
+                                        stack varchar(50) NOT NULL,
+                                        correct int NOT NULL,
+                                        total int NOT NULL,
+                                        date date NOT NULL
+                                        )";
+                command.ExecuteNonQuery();
+            }
+        }
+    }
+
     internal static void CreateFlashcardsTable(string flashcardsConnectionString)
     {
         using (var connection = new QC.SqlConnection(flashcardsConnectionString))
@@ -215,5 +238,10 @@ internal class DatabaseManager
                 }
             }
         }
+    }
+
+    internal static void PostStudySession(StudySession session)
+    {
+
     }
 }

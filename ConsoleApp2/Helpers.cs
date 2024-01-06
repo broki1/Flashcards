@@ -20,6 +20,7 @@ internal class Helpers
         // calls method that creates Stacks and Flashcards tables if they do not already exist in the DB
         DatabaseManager.CreateStacksTable(flashcardsConnectionString);
         DatabaseManager.CreateFlashcardsTable(flashcardsConnectionString);
+        DatabaseManager.CreateStudySessionsTable(flashcardsConnectionString);
     }
 
     internal static Flashcard CreateFlashcard(int stackId, string stackName)
