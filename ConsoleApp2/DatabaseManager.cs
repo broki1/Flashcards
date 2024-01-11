@@ -240,8 +240,18 @@ internal class DatabaseManager
         }
     }
 
-    internal static void PostStudySession(StudySession session)
-    {
+    internal static void PostStudySession(StudySession session, string connectionString)
+    {   
+        using (var connection = new QC.SqlConnection(connectionString))
+        {
+            using (var command = new QC.SqlCommand())
+            {
+                connection.Open();
+                command.Connection = connection;
+                command.CommandType= DT.CommandType.Text;
 
+                command.CommandText = $"INSERT INTO StudySession (stack, correct, total, date) VALUES ()";
+            }
+        }
     }
 }

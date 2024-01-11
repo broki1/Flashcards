@@ -16,6 +16,8 @@ namespace Flashcards
         {
             var exitStackMenu = false;
 
+            stackName = Helpers.FormatStackName(stackName);
+
             while (!exitStackMenu)
             {
                 Console.Clear();

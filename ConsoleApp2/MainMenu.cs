@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Flashcards.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -44,6 +45,9 @@ internal class MainMenu
                     {
                         StackManager.IndividualStackMenu(stackName);
                     }
+                    break;
+                case "study":
+                    Study.StudyMenu();
                     break;
                 default:
                     Console.WriteLine("\n\nInvalid input. Please try again.\n\n");
