@@ -254,4 +254,41 @@ internal class DatabaseManager
             }
         }
     }
+
+    internal static string GenerateQuestion(List<string> questions, int stackId)
+    {
+        string question;
+
+        using (var connection = new QC.SqlConnection(ConfigurationManager.AppSettings.Get("FlashcardsConnectionString")))
+        {
+            connection.Open();
+            using (var command =  connection.CreateCommand())
+            {
+                command.Connection = connection;
+                command.CommandType = DT.CommandType.Text;
+
+                command.CommandText = $"SELECT COUNT(*) FROM Flashcards WHERE stack = {stackId}";
+                var uniqueFlashcardCount = Convert.ToInt32(command.ExecuteScalar());
+
+                if (uniqueFlashcardCount == questions.Count())
+                {
+                    question = "Study session complete.";
+                }
+                else
+                {
+                    command.CommandText = $"SELECT TOP 1 front FROM Flashcards WHERE stack = {stackId} ORDER BY NEWID()";
+
+                    question = Convert.ToString(command.ExecuteScalar());
+
+                    while (questions.Contains(question))
+                    {
+                        question = Convert.ToString(command.ExecuteScalar());
+                    }
+                }
+                
+            }
+        }
+
+        return question;
+    }
 }

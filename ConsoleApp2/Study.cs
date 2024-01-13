@@ -1,7 +1,12 @@
-﻿namespace Flashcards;
+﻿using System.Configuration;
+using QC = Microsoft.Data.SqlClient;
+
+namespace Flashcards;
 
 internal class Study
 {
+
+    private static string connectionString = ConfigurationManager.AppSettings.Get("FlashcardsConnectionString");
 
     internal static void StudyMenu()
     {
@@ -26,10 +31,34 @@ internal class Study
 
         userInput = Helpers.FormatStackName(userInput);
 
-        Console.WriteLine($"\nSUCCESS! You've chosen to study {userInput}");
-        Console.ReadKey();
+        Study.CompleteSession(userInput);
 
 
     }
 
+    private static void CompleteSession(string stackName)
+    {
+        List<string> questions = new List<string>();
+        var stackId = DatabaseManager.GetStackId(stackName);
+
+        var exitSession = false;
+
+        while (!exitSession)
+        {
+            var question = DatabaseManager.GenerateQuestion(questions, stackId);
+
+            if (question != "Study session complete.")
+            {
+                questions.Add(question);
+            } else
+            {
+                exitSession = true;
+            }
+
+            Console.WriteLine(question);
+
+            Console.ReadLine();
+        }
+        
+    }
 }
