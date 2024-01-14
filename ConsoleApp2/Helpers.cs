@@ -55,12 +55,21 @@ internal class Helpers
         studyFlashcard.Add(flashcard);
 
         ConsoleTableBuilder.From(studyFlashcard).WithTitle(stackName).WithFormat(ConsoleTableBuilderFormat.Alternative).ExportAndWriteLine();
+
+        Console.WriteLine("\n\nInput your answer to this card (use the same punctuation)\nOr 0 to exit\n");
     }
 
     // formats parameter string so that first letter is capitalized and the rest of the characters are lowercase
     internal static string FormatStackName(string stackName)
     {
         return char.ToUpper(stackName[0]) + stackName.Substring(1).ToLower();
+    }
+
+    internal static string GetFlashcardAnswer()
+    {
+        var answer = Console.ReadLine().Trim();
+
+        return answer;
     }
 
     internal static int GetNumFlashcards(string stackName)

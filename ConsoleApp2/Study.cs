@@ -1,5 +1,4 @@
-﻿using ConsoleTableExt;
-using Flashcards.Models;
+﻿using Flashcards.Models;
 using System.Configuration;
 using QC = Microsoft.Data.SqlClient;
 
@@ -40,6 +39,8 @@ internal class Study
 
     private static void CompleteSession(string stackName)
     {
+        var studySession = new StudySession();
+
         List<string> questions = new List<string>();
         var stackId = DatabaseManager.GetStackId(stackName);
 
@@ -48,6 +49,8 @@ internal class Study
         while (!exitSession)
         {
             Console.Clear();
+
+            Console.WriteLine(studySession.Date);
 
             var studyFlashcard = new List<StudyFlashcardDTO>();
 
@@ -62,10 +65,54 @@ internal class Study
                 questions.Add(question);
 
                 Helpers.DisplayQuestion(question, studyFlashcard, stackName);
-            }
 
-            Console.ReadLine();
+                var answer = Helpers.GetFlashcardAnswer();
+
+                var correct = Study.ProcessAnswer(question, answer);
+
+                studySession.Total++;
+
+                if (correct)
+                {
+                    studySession.Correct++;
+                }
+
+                Console.WriteLine("Press any key to continue.");
+                Console.ReadKey();
+            }
         }
-        
+
+    }
+
+    private static bool ProcessAnswer(string question, string userAnswer)
+    {
+        bool correct;
+
+        using (var connection = new QC.SqlConnection(connectionString))
+        {
+            using (var command = new QC.SqlCommand())
+            {
+                connection.Open();
+                command.Connection = connection;
+                command.CommandType = System.Data.CommandType.Text;
+                command.CommandText = $"SELECT back FROM Flashcards WHERE front = '{question}'";
+
+                var answer = Convert.ToString(command.ExecuteScalar());
+
+                if (answer.Equals(userAnswer, StringComparison.OrdinalIgnoreCase))
+                {
+                    Console.WriteLine("\n\nCorrect!");
+                    correct = true;
+                }
+
+                else
+                {
+                    Console.WriteLine($"\n\nYour answer was wrong.\nYou answered {userAnswer}\nThe correct answer was {answer}\n");
+                    correct = false;
+                }
+            }
+        }
+
+        return correct;
     }
 }
