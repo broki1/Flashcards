@@ -3,6 +3,6 @@
 internal class StudyFlashcardDTO
 {
 
-    internal string Front { get; set; }
+    public string Front { get; set; }
 
 }

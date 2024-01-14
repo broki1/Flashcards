@@ -1,4 +1,5 @@
-﻿using Flashcards.Models;
+﻿using ConsoleTableExt;
+using Flashcards.Models;
 using System.Configuration;
 
 namespace Flashcards;
@@ -42,6 +43,18 @@ internal class Helpers
         };
 
         Console.Clear();
+    }
+
+    internal static void DisplayQuestion(string question, List<StudyFlashcardDTO> studyFlashcard, string stackName)
+    {
+        var flashcard = new StudyFlashcardDTO
+        {
+            Front = question
+        };
+
+        studyFlashcard.Add(flashcard);
+
+        ConsoleTableBuilder.From(studyFlashcard).WithTitle(stackName).WithFormat(ConsoleTableBuilderFormat.Alternative).ExportAndWriteLine();
     }
 
     // formats parameter string so that first letter is capitalized and the rest of the characters are lowercase

@@ -1,4 +1,6 @@
-﻿using System.Configuration;
+﻿using ConsoleTableExt;
+using Flashcards.Models;
+using System.Configuration;
 using QC = Microsoft.Data.SqlClient;
 
 namespace Flashcards;
@@ -45,17 +47,22 @@ internal class Study
 
         while (!exitSession)
         {
+            Console.Clear();
+
+            var studyFlashcard = new List<StudyFlashcardDTO>();
+
             var question = DatabaseManager.GenerateQuestion(questions, stackId);
 
-            if (question != "Study session complete.")
-            {
-                questions.Add(question);
-            } else
+            if (question == "Study session complete.")
             {
                 exitSession = true;
             }
+            else
+            {
+                questions.Add(question);
 
-            Console.WriteLine(question);
+                Helpers.DisplayQuestion(question, studyFlashcard, stackName);
+            }
 
             Console.ReadLine();
         }
