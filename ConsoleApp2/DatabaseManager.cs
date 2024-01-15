@@ -41,7 +41,7 @@ internal class DatabaseManager
                 command.CommandText = @"IF NOT EXISTS (SELECT 1 FROM sys.objects WHERE name = 'StudySessions')
                                         CREATE TABLE StudySessions (
                                         id int PRIMARY KEY IDENTITY(1, 1),
-                                        stack varchar(50) NOT NULL,
+                                        stack int NOT NULL,
                                         correct int NOT NULL,
                                         total int NOT NULL,
                                         date date NOT NULL
@@ -250,7 +250,14 @@ internal class DatabaseManager
                 command.Connection = connection;
                 command.CommandType = DT.CommandType.Text;
 
-                command.CommandText = $"INSERT INTO StudySession (stack, correct, total, date) VALUES ()";
+                command.CommandText = $"INSERT INTO StudySessions (stack, correct, total, date) VALUES ({session.Stack}, {session.Correct}, {session.Total}, '{session.Date}')";
+
+                var success = command.ExecuteNonQuery();
+
+                if (success != -1)
+                {
+                    Console.WriteLine("Study session saved.\n\n");
+                }
             }
         }
     }

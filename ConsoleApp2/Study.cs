@@ -44,6 +44,8 @@ internal class Study
         List<string> questions = new List<string>();
         var stackId = DatabaseManager.GetStackId(stackName);
 
+        studySession.Stack = stackId;
+
         var exitSession = false;
 
         while (!exitSession)
@@ -89,6 +91,7 @@ internal class Study
 
         Console.WriteLine($"\n\nExiting Study session\nYou got {studySession.Correct} right out of {studySession.Total}\nPress any key to continue");
         Console.ReadKey();
+        DatabaseManager.PostStudySession(studySession, connectionString);
 
     }
 

@@ -1,7 +1,6 @@
 ﻿using ConsoleTableExt;
 using Flashcards.Models;
 using System.Configuration;
-using System.Net.Quic;
 
 namespace Flashcards;
 
@@ -146,7 +145,7 @@ internal class Helpers
             {
                 connection.Open();
                 command.Connection = connection;
-                command.CommandType= System.Data.CommandType.Text;
+                command.CommandType = System.Data.CommandType.Text;
                 command.CommandText = $"SELECT COUNT(*) FROM Flashcards WHERE stack = {DatabaseManager.GetStackId(stackName)}";
 
                 stackId = Convert.ToInt32(command.ExecuteScalar());
