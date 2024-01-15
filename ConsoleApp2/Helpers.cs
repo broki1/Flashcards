@@ -1,6 +1,7 @@
 ﻿using ConsoleTableExt;
 using Flashcards.Models;
 using System.Configuration;
+using System.Net.Quic;
 
 namespace Flashcards;
 
@@ -133,6 +134,26 @@ internal class Helpers
         }
 
         return validInput;
+    }
+
+    internal static int TotalFlashcardsInStack(string stackName)
+    {
+        int stackId;
+
+        using (var connection = new Microsoft.Data.SqlClient.SqlConnection(ConfigurationManager.AppSettings.Get("FlashcardsConnectionString")))
+        {
+            using (var command = new Microsoft.Data.SqlClient.SqlCommand())
+            {
+                connection.Open();
+                command.Connection = connection;
+                command.CommandType= System.Data.CommandType.Text;
+                command.CommandText = $"SELECT COUNT(*) FROM Flashcards WHERE stack = {DatabaseManager.GetStackId(stackName)}";
+
+                stackId = Convert.ToInt32(command.ExecuteScalar());
+            }
+        }
+
+        return stackId;
     }
 
     internal static bool ValidFlashcardID(string userInput, List<FlashcardDTO> flashcards)

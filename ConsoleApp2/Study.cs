@@ -50,24 +50,29 @@ internal class Study
         {
             Console.Clear();
 
-            Console.WriteLine(studySession.Date);
+            if (questions.Count == Helpers.TotalFlashcardsInStack(stackName))
+            {
+                questions.Clear();
+            }
 
             var studyFlashcard = new List<StudyFlashcardDTO>();
 
             var question = DatabaseManager.GenerateQuestion(questions, stackId);
 
-            if (question == "Study session complete.")
+
+            questions.Add(question);
+
+            Helpers.DisplayQuestion(question, studyFlashcard, stackName);
+
+            var answer = Helpers.GetFlashcardAnswer();
+
+            if (answer == "0")
             {
                 exitSession = true;
             }
+
             else
             {
-                questions.Add(question);
-
-                Helpers.DisplayQuestion(question, studyFlashcard, stackName);
-
-                var answer = Helpers.GetFlashcardAnswer();
-
                 var correct = Study.ProcessAnswer(question, answer);
 
                 studySession.Total++;
@@ -81,6 +86,9 @@ internal class Study
                 Console.ReadKey();
             }
         }
+
+        Console.WriteLine($"\n\nExiting Study session\nYou got {studySession.Correct} right out of {studySession.Total}\nPress any key to continue");
+        Console.ReadKey();
 
     }
 

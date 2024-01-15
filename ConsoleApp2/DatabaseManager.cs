@@ -37,7 +37,7 @@ internal class DatabaseManager
                 connection.Open();
 
                 command.Connection = connection;
-                command.CommandType= DT.CommandType.Text;
+                command.CommandType = DT.CommandType.Text;
                 command.CommandText = @"IF NOT EXISTS (SELECT 1 FROM sys.objects WHERE name = 'StudySessions')
                                         CREATE TABLE StudySessions (
                                         id int PRIMARY KEY IDENTITY(1, 1),
@@ -142,9 +142,9 @@ internal class DatabaseManager
 
         using (var connection = new QC.SqlConnection(connectionString))
         {
-            using ( var command = new QC.SqlCommand())
+            using (var command = new QC.SqlCommand())
             {
-                using (var secondCommand =  new QC.SqlCommand())
+                using (var secondCommand = new QC.SqlCommand())
                 {
                     connection.Open();
                     command.Connection = connection;
@@ -155,7 +155,7 @@ internal class DatabaseManager
                     secondCommand.CommandType = DT.CommandType.Text;
                     secondCommand.CommandText = $"DELETE FROM Flashcards WHERE stack = {stackId}";
 
-                    
+
                     var result2 = secondCommand.ExecuteNonQuery();
                     var result1 = command.ExecuteNonQuery();
 
@@ -241,14 +241,14 @@ internal class DatabaseManager
     }
 
     internal static void PostStudySession(StudySession session, string connectionString)
-    {   
+    {
         using (var connection = new QC.SqlConnection(connectionString))
         {
             using (var command = new QC.SqlCommand())
             {
                 connection.Open();
                 command.Connection = connection;
-                command.CommandType= DT.CommandType.Text;
+                command.CommandType = DT.CommandType.Text;
 
                 command.CommandText = $"INSERT INTO StudySession (stack, correct, total, date) VALUES ()";
             }
@@ -262,30 +262,19 @@ internal class DatabaseManager
         using (var connection = new QC.SqlConnection(ConfigurationManager.AppSettings.Get("FlashcardsConnectionString")))
         {
             connection.Open();
-            using (var command =  connection.CreateCommand())
+            using (var command = connection.CreateCommand())
             {
                 command.Connection = connection;
                 command.CommandType = DT.CommandType.Text;
+                command.CommandText = $"SELECT TOP 1 front FROM Flashcards WHERE stack = {stackId} ORDER BY NEWID()";
 
-                command.CommandText = $"SELECT COUNT(*) FROM Flashcards WHERE stack = {stackId}";
-                var uniqueFlashcardCount = Convert.ToInt32(command.ExecuteScalar());
+                question = Convert.ToString(command.ExecuteScalar());
 
-                if (uniqueFlashcardCount == questions.Count())
+                while (questions.Contains(question))
                 {
-                    question = "Study session complete.";
-                }
-                else
-                {
-                    command.CommandText = $"SELECT TOP 1 front FROM Flashcards WHERE stack = {stackId} ORDER BY NEWID()";
-
                     question = Convert.ToString(command.ExecuteScalar());
-
-                    while (questions.Contains(question))
-                    {
-                        question = Convert.ToString(command.ExecuteScalar());
-                    }
                 }
-                
+
             }
         }
 
