@@ -97,6 +97,29 @@ internal class Helpers
         return int.Parse(userInput);
     }
 
+    internal static string GetStackName(int stackId)
+    {
+        var connectionString = ConfigurationManager.AppSettings.Get("FlashcardsConnectionString");
+
+        string stackName;
+
+        using (var connection = new Microsoft.Data.SqlClient.SqlConnection(connectionString))
+        {
+            using (var command = new Microsoft.Data.SqlClient.SqlCommand())
+            {
+                connection.Open();
+                command.Connection = connection;
+                command.CommandType = System.Data.CommandType.Text;
+                command.CommandText = "SELECT name FROM Stacks";
+
+                stackName = Convert.ToString(command.ExecuteScalar());
+
+            }
+        }
+
+        return stackName;
+    }
+
     // checks StackNames list if stack name inputted by the user already exists
     internal static bool StackNameAlreadyExists(string userInput)
     {

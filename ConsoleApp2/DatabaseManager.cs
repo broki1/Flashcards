@@ -1,4 +1,6 @@
-﻿using Flashcards.Models;
+﻿using ConsoleTableExt;
+using Flashcards.Models;
+using System.ComponentModel.DataAnnotations;
 using System.Configuration;
 using DT = System.Data;
 using QC = Microsoft.Data.SqlClient;
@@ -286,5 +288,47 @@ internal class DatabaseManager
         }
 
         return question;
+    }
+
+    internal static void PrintStudySessions()
+    {
+        Console.Clear();
+        var connectionString = ConfigurationManager.AppSettings.Get("FlashcardsConnectionString");
+        var studySessions = new List<StudySessionDTO>();
+
+        using (var connection = new QC.SqlConnection(connectionString))
+        {
+            using (var command = new QC.SqlCommand())
+            {
+                connection.Open();
+                command.Connection = connection;
+                command.CommandType = DT.CommandType.Text;
+                command.CommandText = $"SELECT stack, correct, total, date FROM StudySessions";
+
+                var reader = command.ExecuteReader();
+
+                if (reader.HasRows)
+                {
+                    while (reader.Read())
+                    {
+                        var studySession = new StudySessionDTO
+                        {
+                            Stack = Helpers.GetStackName(reader.GetInt32(0)),
+                            Correct = reader.GetInt32(1),
+                            Total = reader.GetInt32(2),
+                            Date = reader.GetDateTime(3).ToString("yyyy-MM-dd")
+                        };
+
+                        studySessions.Add(studySession);
+                    }
+                }
+            }
+        }
+
+        ConsoleTableBuilder.From(studySessions).WithFormat(ConsoleTableBuilderFormat.Alternative).ExportAndWriteLine();
+
+        Console.WriteLine("\n\nPress any key to continue.");
+
+        Console.ReadKey();
     }
 }

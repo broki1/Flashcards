@@ -49,6 +49,9 @@ internal class MainMenu
                 case "study":
                     Study.StudyMenu();
                     break;
+                case "view study session data":
+                    DatabaseManager.PrintStudySessions();
+                    break;
                 default:
                     Console.WriteLine("\n\nInvalid input. Please try again.\n\n");
                     break;
