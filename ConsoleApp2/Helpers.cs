@@ -110,7 +110,7 @@ internal class Helpers
                 connection.Open();
                 command.Connection = connection;
                 command.CommandType = System.Data.CommandType.Text;
-                command.CommandText = "SELECT name FROM Stacks";
+                command.CommandText = $"SELECT name FROM Stacks WHERE id = {stackId}";
 
                 stackName = Convert.ToString(command.ExecuteScalar());
 
@@ -143,7 +143,7 @@ internal class Helpers
                 {
                     while (reader.Read())
                     {
-                        var stackName = reader.GetString(0).Trim().ToLower();
+                        var stackName = Helpers.FormatStackName(reader.GetString(0).Trim().ToLower());
 
                         if (userInput.Equals(stackName))
                         {

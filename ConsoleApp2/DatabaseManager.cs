@@ -327,8 +327,42 @@ internal class DatabaseManager
 
         ConsoleTableBuilder.From(studySessions).WithFormat(ConsoleTableBuilderFormat.Alternative).ExportAndWriteLine();
 
-        Console.WriteLine("\n\nPress any key to continue.");
+        Console.WriteLine("\n\nEnter name of stack to see more detailed report, or enter 0 to continue.");
 
-        Console.ReadKey();
+        var userInput = Helpers.FormatStackName(Console.ReadLine().Trim());
+
+        switch (userInput)
+        {
+            case "0":
+                break;
+            default:
+                while (!Helpers.StackNameAlreadyExists(userInput))
+                {
+                    Console.WriteLine("\n\nInvalid input. Please enter the name of a stack to see more detailed report, or enter 0 to exit to main menu.\n\n");
+                    userInput = Helpers.FormatStackName(Console.ReadLine().Trim());
+                }
+                break;
+        }
     }
+
+    internal static void PrintSessionReport()
+    {
+        throw new NotImplementedException();
+    }
+}
+
+internal enum Months
+{
+    January = 1,
+    February,
+    March,
+    April,
+    May,
+    June,
+    July,
+    August,
+    September,
+    October,
+    November,
+    December
 }
