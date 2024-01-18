@@ -1,4 +1,5 @@
-﻿using ConsoleTableExt;
+﻿using Azure;
+using ConsoleTableExt;
 using Flashcards.Models;
 using System.ComponentModel.DataAnnotations;
 using System.Configuration;
@@ -329,19 +330,17 @@ internal class DatabaseManager
 
         Console.WriteLine("\n\nEnter name of stack to see more detailed report, or enter 0 to continue.");
 
-        var userInput = Helpers.FormatStackName(Console.ReadLine().Trim());
+        var userInput = Console.ReadLine().Trim().ToLower();
 
-        switch (userInput)
+        while (string.IsNullOrEmpty(userInput) || !Helpers.StackNameAlreadyExists(userInput))
         {
-            case "0":
+            if (userInput.Equals("0"))
+            {
                 break;
-            default:
-                while (!Helpers.StackNameAlreadyExists(userInput))
-                {
-                    Console.WriteLine("\n\nInvalid input. Please enter the name of a stack to see more detailed report, or enter 0 to exit to main menu.\n\n");
-                    userInput = Helpers.FormatStackName(Console.ReadLine().Trim());
-                }
-                break;
+            }
+
+            Console.WriteLine("\n\nInvalid input. Enter name of stack to see more detailed report, or enter 0 to continue.\n");
+            userInput = Console.ReadLine().Trim().ToLower();
         }
     }
 

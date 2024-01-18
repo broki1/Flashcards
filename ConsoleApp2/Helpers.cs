@@ -143,7 +143,7 @@ internal class Helpers
                 {
                     while (reader.Read())
                     {
-                        var stackName = Helpers.FormatStackName(reader.GetString(0).Trim().ToLower());
+                        var stackName = reader.GetString(0).Trim().ToLower();
 
                         if (userInput.Equals(stackName))
                         {
