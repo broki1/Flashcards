@@ -1,7 +1,5 @@
-﻿using Azure;
-using ConsoleTableExt;
+﻿using ConsoleTableExt;
 using Flashcards.Models;
-using System.ComponentModel.DataAnnotations;
 using System.Configuration;
 using DT = System.Data;
 using QC = Microsoft.Data.SqlClient;
@@ -342,11 +340,89 @@ internal class DatabaseManager
             Console.WriteLine("\n\nInvalid input. Enter name of stack to see more detailed report, or enter 0 to continue.\n");
             userInput = Console.ReadLine().Trim().ToLower();
         }
+
+        switch (userInput)
+        {
+            case "0":
+                break;
+            default:
+                userInput = Helpers.FormatStackName(userInput);
+                DatabaseManager.PrintSessionReport(DatabaseManager.GetStackId(userInput));
+                break;
+        }
     }
 
-    internal static void PrintSessionReport()
+    internal static void PrintSessionReport(int stackId)
     {
-        throw new NotImplementedException();
+        Console.Clear();
+        var yearReport = new YearReport();
+        var yearReportList = new List<YearReport>();
+        yearReport.StackName = Helpers.GetStackName(stackId);
+
+        Console.WriteLine("------------------------------");
+        Console.WriteLine("Input a year in YYYY format");
+        Console.WriteLine("------------------------------\n");
+
+        var year = Console.ReadLine().Trim();
+
+        while (!int.TryParse(year, out _))
+        {
+            Console.WriteLine("\n\nInvalid input, enter a year in YYYY format.\n");
+            year = Console.ReadLine();
+        }
+
+        var connectionString = ConfigurationManager.AppSettings.Get("FlashcardsConnectionString");
+
+        using (var connection = new QC.SqlConnection(connectionString))
+        {
+            using (var command = new QC.SqlCommand())
+            {
+                connection.Open();
+                command.Connection = connection;
+                command.CommandType = DT.CommandType.Text;
+                command.CommandText = @$"SELECT [1] AS January, [2] AS February, [3] AS March, [4] AS April, [5] AS May, [6] AS June, [7] AS July, [8] AS August, [9] AS September, [10] AS October, [11] AS November, [12] AS December
+FROM (
+    SELECT Month(date) as MonthYear
+    FROM StudySessions WHERE YEAR(date) = {year} AND stack = {stackId}
+) as SourceTable
+PIVOT
+(
+    Count(MonthYear) FOR MonthYear in ([1], [2], [3], [4], [5], [6], [7], [8], [9], [10], [11], [12])
+) AS PivotTable;";
+
+                var reader = command.ExecuteReader();
+
+                if (reader.HasRows)
+                {
+                    while (reader.Read())
+                    {
+                        yearReport.January = reader.GetInt32(0);
+                        yearReport.February = reader.GetInt32(1);
+                        yearReport.March = reader.GetInt32(2);
+                        yearReport.April = reader.GetInt32(3);
+                        yearReport.May = reader.GetInt32(4);
+                        yearReport.June = reader.GetInt32(5);
+                        yearReport.July = reader.GetInt32(6);
+                        yearReport.August   = reader.GetInt32(7);
+                        yearReport.September = reader.GetInt32(8);
+                        yearReport.October = reader.GetInt32(9);
+                        yearReport.November = reader.GetInt32(10);
+                        yearReport.December = reader.GetInt32(11);
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("\n\nNo rows found.");
+                }
+
+                yearReportList.Add(yearReport);
+
+                ConsoleTableBuilder.From(yearReportList).WithTitle($"Number of sessions per month for: {year}").WithFormat(ConsoleTableBuilderFormat.Alternative).ExportAndWriteLine();
+
+                Console.WriteLine("\n\nPress any key to continue.");
+                Console.ReadKey();
+            }
+        }
     }
 }
 
